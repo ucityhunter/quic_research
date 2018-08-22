@@ -1,0 +1,39 @@
+How To Build libquic on centos6.5?
+
+1. git clone https://github.com/devsisters/libquic.git
+
+2. 
+	$ mkdir build/
+	$ cd build/
+	$ cmake ..
+	$ make -j 4
+
+但报错出现以下错误：
+[ 11%] Building ASM object boringssl/crypto/chacha/CMakeFiles/chacha.dir/chacha-x86_64.S.o
+/home/yazhou.yang/libquic/build/boringssl/crypto/chacha/chacha-x86_64.S: Assembler messages:
+/home/yazhou.yang/libquic/build/boringssl/crypto/chacha/chacha-x86_64.S:1002: Error: no such instruction: vbroadcasti128 .Lsigma(%rip),%ymm11' /home/yazhou.yang/libquic/build/boringssl/crypto/chacha/chacha-x86_64.S:1003: Error: no such instruction:vbroadcasti128 (%rcx),%ymm3'
+/home/yazhou.yang/libquic/build/boringssl/crypto/chacha/chacha-x86_64.S:1004: Error: no such instruction: vbroadcasti128 16(%rcx),%ymm15' /home/yazhou.yang/libquic/build/boringssl/crypto/chacha/chacha-x86_64.S:1005: Error: no such instruction:vbroadcasti128 (%r8),%ymm7'
+/home/yazhou.yang/libquic/build/boringssl/crypto/chacha/chacha-x86_64.S:1011: Error: suffix or operands invalid for vpshufd' /home/yazhou.yang/libquic/build/boringssl/crypto/chacha/chacha-x86_64.S:1012: Error: suffix or operands invalid forvpshufd'
+
+3. 安装高版本gcc(本人用gcc6.2, 参考https://blog.csdn.net/furzoom/article/details/53322510即可)
+		wget http://ftp.gnu.org/gnu/gcc/gcc-6.2.0/gcc-6.2.0.tar.bz2
+		tar jxf gcc-6.2.0.tar.bz2		
+	  cd gcc-6.2.0
+	  ./contrib/download_prerequisites
+		mkdir gcc-build-6.2.0
+		cd gcc-build-6.2.0/
+		../configure -perfix=/usr/local/gcc62/ -enable-checking=release -enable-languages=c,c++ -disable-multilib
+		make -j4
+		make install
+		
+		ln -s /usr/local/gcc62/bin/g++ /usr/bin/
+		ln -s /usr/local/gcc62/bin/gcc /usr/bin/
+		ln -s /usr/local/gcc62/bin/c++ /usr/bin/
+
+
+4. 下载http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz,  加压, make && make install即可
+
+然后继续执行2，最终出现
+[100%] Building C object CMakeFiles/quic.dir/src/third_party/zlib/uncompr.c.o
+Linking CXX static library libquic.a
+[100%] Built target quic
